@@ -32,6 +32,20 @@
       <label for="facebook_link">Facebook Link</label>
       {{ form.facebook_link(class_ = 'form-control', placeholder='http://', autofocus = true) }}
     </div>
+    <div class="form-group">
+      <label for="website">Website</label>
+      {{ form.website(class_ = 'form-control', placeholder='http://', autofocus = true) }}
+    </div>
+    <div class="checkbox">
+      <label for="seeking_talent">
+        {{ form.seeking_talent() }}
+        Seeking Talent
+      </label>
+    </div>
+    <div class="form-group">
+      <label for="seeking_description">Seeking Description</label>
+      {{ form.seeking_description(class_ = 'form-control', placeholder='Describe your need...', autofocus = true) }}
+    </div>
     <input type="submit" value="Edit Artist" class="btn btn-primary btn-lg btn-block">
   </form>
 </div>

@@ -174,7 +174,7 @@ class VenueForm(Form):
                 'Soul',
                 'Other'
             ])
-        ]
+        ],
         choices=[
             ('Alternative', 'Alternative'),
             ('Blues', 'Blues'),
@@ -363,7 +363,7 @@ class ArtistForm(Form):
                 'Soul',
                 'Other'
             ])
-        ]
+        ],
         choices=[
             ('Alternative', 'Alternative'),
             ('Blues', 'Blues'),
