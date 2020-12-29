@@ -172,6 +172,7 @@ class VenueForm(Form):
                 'Reggae',
                 'Rock n Roll',
                 'Soul',
+                'Swing',
                 'Other'
             ])
         ],
@@ -194,6 +195,7 @@ class VenueForm(Form):
             ('Reggae', 'Reggae'),
             ('Rock n Roll', 'Rock n Roll'),
             ('Soul', 'Soul'),
+            ('Swing', 'Swing'),
             ('Other', 'Other'),
         ]
     )
@@ -393,8 +395,8 @@ class ArtistForm(Form):
     website = StringField(
         'website', validators=[URL()]
     )
-    seeking_talent = BooleanField(
-        'seeking_talent', validators=[DataRequired()],
+    seeking_venue = BooleanField(
+        'seeking_venue', validators=[DataRequired()],
     )
     seeking_description = StringField(
         'seeking_description'
