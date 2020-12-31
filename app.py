@@ -227,7 +227,7 @@ def show_venue(venue_id):
     venue = Venue.query.get(venue_id)
 
     data = venue.__dict__   # Convert venue object to dictionary
-    data['genres'] = data['genres'].replace(' ', '').strip('{}').split(',')
+    data['genres'] = data['genres'].replace(', ', ',').strip('{}').split(',')
     data['past_shows'] = []
     data['upcoming_shows'] = []
 
