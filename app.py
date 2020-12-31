@@ -20,6 +20,7 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+from datetime import datetime
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -117,27 +118,53 @@ def show_venue(venue_id):
     # shows the venue page with the given venue_id
     # TODO: replace with real venue data from the venues table, using venue_id
 
-    venue = Venue.query.get(venue_id)
+    past_shows = db.session.query(Artist, Show).join(Show).join(Venue).\
+        filter(
+            Show.venue_id == venue_id,
+            Show.artist_id == Artist.id,
+            Show.start_time < datetime.now()
+    ).\
+        all()
 
-    data = venue.__dict__   # Convert venue object to dictionary
-    data['genres'] = data['genres'].replace(', ', ',').strip('{}').split(',')
-    data['past_shows'] = []
-    data['upcoming_shows'] = []
+    upcoming_shows = db.session.query(Artist, Show).join(Show).join(Venue).\
+        filter(
+            Show.venue_id == venue_id,
+            Show.artist_id == Artist.id,
+            Show.start_time == datetime.now()
+    ).\
+        all()
 
-    for show in venue.shows:
-        sh = show.__dict__
-        sh['artist_name'] = show.artist.name
-        sh['artist_image_link'] = show.artist.image_link
+    venue = Venue.query.filter_by(id=venue_id).first_or_404()
 
-        if show.start_time <= datetime.today():
-            sh['start_time'] = show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
-            data['past_shows'].append(sh)
-        else:
-            sh['start_time'] = show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
-            data['upcoming_shows'].append(sh)
+    data = {
+        'id': venue.id,
+        'name': venue.name,
+        'genres': venue.genres.replace(', ', ',').strip('{}').split(','),
+        'address': venue.address,
+        'city': venue.city,
+        'state': venue.state,
+        'phone': venue.phone,
+        'website': venue.website,
+        'facebook_link': venue.facebook_link,
+        'image_link': venue.image_link,
+        'seeking_talent': venue.seeking_talent,
+        'seeking_description': venue.seeking_description,
+        'past_shows': [{
+            'artist_id': artist.id,
+            'artist_name': artist.name,
+            'artist_image_link': artist.image_link,
+            'start_time': show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
+        } for artist, show in past_shows],
+        'upcoming_shows': [{
+            'artist_id': artist.id,
+            'artist_name': artist.name,
+            'artist_image_link': artist.image_link,
+            'start_time': show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
+        } for artist, show in upcoming_shows],
+        'past_shows_count': len(past_shows),
+        'upcoming_shows_count': len(upcoming_shows)
 
-    data['past_shows_count'] = len(data['past_shows'])
-    data['upcoming_shows_count'] = len(data['upcoming_shows'])
+    }
 
     return render_template('pages/show_venue.html', venue=data)
 
@@ -242,30 +269,55 @@ def search_artists():
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
-    # shows the venue page with the given venue_id
-    # TODO: replace with real venue data from the venues table, using venue_id
+    # shows the artist page with the given artist_id
+    # TODO: replace with real artist data from the artists table, using artist_id
 
-    artist = Artist.query.get(artist_id)
+    past_shows = db.session.query(Artist, Show).join(Show).join(Venue).\
+        filter(
+            Show.artist_id == artist_id,
+            Show.venue_id == Venue.id,
+            Show.start_time < datetime.now()
+    ).\
+        all()
 
-    data = artist.__dict__   # Convert artist object to dictionary
-    data['genres'] = data['genres'].replace(', ', ',').strip('{}').split(',')
-    data['past_shows'] = []
-    data['upcoming_shows'] = []
+    upcoming_shows = db.session.query(Artist, Show).join(Show).join(Venue).\
+        filter(
+            Show.artist_id == artist_id,
+            Show.venue_id == Venue.id,
+            Show.start_time == datetime.now()
+    ).\
+        all()
 
-    for show in artist.shows:
-        sh = show.__dict__
-        sh['venue_name'] = show.venue.name
-        sh['venue_image_link'] = show.venue.image_link
+    artist = Artist.query.filter_by(id=artist_id).first_or_404()
 
-        if show.start_time <= datetime.today():
-            sh['start_time'] = show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
-            data['past_shows'].append(sh)
-        else:
-            sh['start_time'] = show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
-            data['upcoming_shows'].append(sh)
+    data = {
+        'id': artist.id,
+        'name': artist.name,
+        'genres': artist.genres.replace(', ', ',').strip('{}').split(','),
+        'city': artist.city,
+        'state': artist.state,
+        'phone': artist.phone,
+        'website': artist.website,
+        'facebook_link': artist.facebook_link,
+        'image_link': artist.image_link,
+        'seeking_venue': artist.seeking_venue,
+        'seeking_description': artist.seeking_description,
+        'past_shows': [{
+            'venue_id': venue.id,
+            'venue_name': venue.name,
+            'venue_image_link': venue.image_link,
+            'start_time': show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
+        } for venue, show in past_shows],
+        'upcoming_shows': [{
+            'venue_id': venue.id,
+            'venue_name': venue.name,
+            'venue_image_link': venue.image_link,
+            'start_time': show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
+        } for venue, show in upcoming_shows],
+        'past_shows_count': len(past_shows),
+        'upcoming_shows_count': len(upcoming_shows)
 
-    data['past_shows_count'] = len(data['past_shows'])
-    data['upcoming_shows_count'] = len(data['upcoming_shows'])
+    }
 
     return render_template('pages/show_artist.html', artist=data)
 
