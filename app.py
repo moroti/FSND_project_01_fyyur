@@ -63,46 +63,21 @@ def index():
 def venues():
     # TODO: replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
-    # Retreive from the DB the list of venues
-    venues = Venue.query.order_by(Venue.state).all()
-    data = []
-    for venue in venues:
-        city = venue.city
-        no_entry = True
-        for d in data:
-            if city in d.values():
-                nv = {}  # Create a new venue
-                nv['id'] = venue.id
-                nv['name'] = venue.name
-                us = venue.shows.copy()  # Retreive all the venue's shows
-                # Then filter out the past shows
-                for s in us:
-                    if s.start_time <= datetime.today():
-                        us.remove(s)
-                nv['num_upcoming_shows'] = len(us)
-                # Add the new venue to the list of venues of the city
-                d['venues'].append(nv)
-                no_entry = False
-        else:
-            if no_entry:
-                nd = {}  # Create a new record for the city
-                nd['city'] = city
-                nd['state'] = venue.state
-                nd['venues'] = []
-                nv = {}  # Create a new venue
-                nv['id'] = venue.id
-                nv['name'] = venue.name
-                us = venue.shows.copy()  # Retreive all the venue's shows
-                # Then filter out the past shows
-                for s in us:
-                    if s.start_time <= datetime.today():
-                        us.remove(s)
-                nv['num_upcoming_shows'] = len(us)
-                # Add the new venue to the list of venues of the city
-                nd['venues'].append(nv)
-                data.append(nd)
 
-    return render_template('pages/venues.html', areas=data)
+    locals = []
+    venues = Venue.query.all()
+    places = Venue.query.distinct(Venue.city, Venue.state).all()
+    for place in places:
+        locals.append({
+            'city': place.city,
+            'state': place.state,
+            'venues': [{
+                'id': venue.id,
+                'name': venue.name,
+            } for venue in venues if
+                venue.city == place.city and venue.state == place.state]
+        })
+    return render_template('pages/venues.html', areas=locals)
 
 
 @app.route('/venues/search', methods=['POST'])
