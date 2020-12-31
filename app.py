@@ -110,7 +110,11 @@ def search_venues():
             nd["num_upcoming_shows"] = len(us)
             response["data"].append(nd)
 
-    return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+    return render_template(
+        'pages/search_venues.html',
+        results=response,
+        search_term=request.form.get('search_term', '')
+    )
 
 
 @app.route('/venues/<int:venue_id>')
@@ -153,13 +157,17 @@ def show_venue(venue_id):
             'artist_id': artist.id,
             'artist_name': artist.name,
             'artist_image_link': artist.image_link,
-            'start_time': show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
+            'start_time': show.start_time.strftime(
+                '%Y-%m-%dT%H:%M:%S%zZ'
+            )
         } for artist, show in past_shows],
         'upcoming_shows': [{
             'artist_id': artist.id,
             'artist_name': artist.name,
             'artist_image_link': artist.image_link,
-            'start_time': show.start_time.strftime('%Y-%m-%dT%H:%M:%S%zZ')
+            'start_time': show.start_time.strftime(
+                '%Y-%m-%dT%H:%M:%S%zZ'
+            )
         } for artist, show in upcoming_shows],
         'past_shows_count': len(past_shows),
         'upcoming_shows_count': len(upcoming_shows)
@@ -189,7 +197,7 @@ def create_venue_submission():
         venue_form.populate_obj(venue)
         db.session.add(venue)
         db.session.commit()
-        # TODO: modify data to be the data object returned from db insertion > Done
+        # TODO: modify data to be the data object returned from db insertion
 
         # on successful db insert, flash success
         flash('Venue ' + venue_data['name'] +
@@ -264,7 +272,11 @@ def search_artists():
             nd["num_upcoming_shows"] = len(us)
             response["data"].append(nd)
 
-    return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+    return render_template(
+        'pages/search_artists.html',
+        results=response,
+        search_term=request.form.get('search_term', '')
+    )
 
 
 @app.route('/artists/<int:artist_id>')
