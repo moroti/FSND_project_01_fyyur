@@ -62,8 +62,6 @@ def index():
 
 @app.route('/venues')
 def venues():
-    # TODO: replace with real venues data.
-    #       num_shows should be aggregated based on number of upcoming shows per venue.
 
     locals = []
     venues = Venue.query.all()
@@ -83,9 +81,6 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-    # seach for Hop should return "The Musical Hop".
-    # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
 
     response = {
         "count": 0,
@@ -120,7 +115,6 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
     # shows the venue page with the given venue_id
-    # TODO: replace with real venue data from the venues table, using venue_id
 
     past_shows = db.session.query(Artist, Show).join(Show).join(Venue).\
         filter(
@@ -188,7 +182,7 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
-    # TODO: insert form data as a new Venue record in the db, instead > Done
+
     try:
         venue_data = request.form
         venue_form = VenueForm(venue_data)
@@ -197,14 +191,13 @@ def create_venue_submission():
         venue_form.populate_obj(venue)
         db.session.add(venue)
         db.session.commit()
-        # TODO: modify data to be the data object returned from db insertion
 
         # on successful db insert, flash success
         flash('Venue ' + venue_data['name'] +
               ' was successfully listed!')
     except:
         db.session.rollback()
-        # TODO: on unsuccessful db insert, flash an error instead. > Done
+
         flash('An error occurred. Venue ' +
               venue_data['name'] + ' could not be listed.')
     finally:
@@ -229,7 +222,7 @@ def delete_venue(venue_id):
 
 @app.route('/artists')
 def artists():
-    # TODO: replace with real data returned from querying the database
+
     artists = Artist.query.order_by(Artist.id).all()
     data = []
     for artist in artists:
@@ -245,9 +238,6 @@ def artists():
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
-    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-    # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
-    # search for "band" should return "The Wild Sax Band".
 
     response = {
         "count": 0,
@@ -282,7 +272,6 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
     # shows the artist page with the given artist_id
-    # TODO: replace with real artist data from the artists table, using artist_id
 
     past_shows = db.session.query(Artist, Show).join(Show).join(Venue).\
         filter(
@@ -404,9 +393,10 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
+
     # called upon submitting the new artist listing form
     try:
-        # TODO: insert form data as a new Artist record in the db, instead
+
         artist_data = request.form
         artist_form = ArtistForm(artist_data)
         # if artist_form.validate_on_submit():
@@ -414,14 +404,13 @@ def create_artist_submission():
         artist_form.populate_obj(artist)
         db.session.add(artist)
         db.session.commit()
-        # TODO: modify data to be the data object returned from db insertion
 
         # on successful db insert, flash success
         flash('Artist ' + artist_data['name'] +
               ' was successfully listed!')
     except:
         db.session.rollback()
-        # TODO: on unsuccessful db insert, flash an error instead. > Done
+
         flash('An error occurred. Artist ' +
               artist_data['name'] + ' could not be listed.')
     finally:
@@ -436,8 +425,6 @@ def create_artist_submission():
 @app.route('/shows')
 def shows():
     # displays list of shows at /shows
-    # TODO: replace with real venues data.
-    #       num_shows should be aggregated based on number of upcoming shows per venue.
 
     shows = Show.query.order_by(Show.id).all()
 
@@ -457,6 +444,7 @@ def shows():
 
 @app.route('/shows/create')
 def create_shows():
+
     # renders form. do not touch.
     form = ShowForm()
     return render_template('forms/new_show.html', form=form)
@@ -464,8 +452,8 @@ def create_shows():
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
+
     # called to create new shows in the db, upon submitting new show listing form
-    # TODO: insert form data as a new Show record in the db, instead
     try:
         show_data = request.form
         show_form = ShowForm(show_data)
@@ -480,8 +468,7 @@ def create_show_submission():
         flash('An error occurred. Show could not be listed.')
     finally:
         db.session.close()
-    # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Show could not be listed.')
+
     # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
     return render_template('pages/home.html')
 
