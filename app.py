@@ -21,6 +21,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from datetime import datetime
+import sys
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -195,11 +196,13 @@ def create_venue_submission():
         # on successful db insert, flash success
         flash('Venue ' + venue_data['name'] +
               ' was successfully listed!')
-    except:
+    except Exception:
         db.session.rollback()
 
         flash('An error occurred. Venue ' +
               venue_data['name'] + ' could not be listed.')
+
+        print(sys.exc_info())
     finally:
         db.session.close()
 
@@ -408,11 +411,13 @@ def create_artist_submission():
         # on successful db insert, flash success
         flash('Artist ' + artist_data['name'] +
               ' was successfully listed!')
-    except:
+    except Exception:
         db.session.rollback()
 
         flash('An error occurred. Artist ' +
               artist_data['name'] + ' could not be listed.')
+
+        print(sys.exc_info())
     finally:
         db.session.close()
 
@@ -463,9 +468,10 @@ def create_show_submission():
         db.session.commit()
         # on successful db insert, flash success
         flash('Show was successfully listed!')
-    except:
+    except Exception:
         db.session.rollback()
         flash('An error occurred. Show could not be listed.')
+        print(sys.exc_info())
     finally:
         db.session.close()
 
